@@ -1,15 +1,11 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-author: "Chuck Thompson"
-date: "Sunday, January 18, 2015"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
+Chuck Thompson  
+Sunday, January 18, 2015  
 
 ## Setting up R Environment
 
-```{r echo=TRUE}
+
+```r
 # Turn echo on globally as instructed in the course assignment.
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -22,7 +18,8 @@ library(lattice)
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 # The data for this assignment is available at:
 #  https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip
 #
@@ -59,7 +56,8 @@ dataWithoutMissing <- data[which(!is.na(data$steps)),]
 
 For this part of the assignment, the missing values in the data set are ignored.
 
-```{r}
+
+```r
 # Create a summary of the data set with the total number of steps for each
 # day, ignoring any missing values.
 dataStepsDay <- summarize(group_by(dataWithoutMissing, date),
@@ -82,8 +80,10 @@ histPlotSteps(dataStepsDay, dataStepsDayMean, dataStepsDayMedian,
               "Total Number of Steps Taken per Day")
 ```
 
-The mean number of steps per day was `r sprintf("%.2f", dataStepsDayMean)` and
-the median number of steps per day was `r sprintf("%.2f", dataStepsDayMedian)`.
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+The mean number of steps per day was 10766.19 and
+the median number of steps per day was 10765.00.
 The blue line on the histogram represents the mean.  Because these values
 are so close to the same, a separate red line indicating the median is
 covered up by the blue line representing the mean.
@@ -94,7 +94,8 @@ covered up by the blue line representing the mean.
 For this part of the assignment, the missing values in the data set are 
 still ignored.
 
-```{r}
+
+```r
 # Create a summary of the data set with the total number of steps for each
 # interval, ignoring any missing values.
 dataStepsInterval <- summarize(group_by(dataWithoutMissing, interval),
@@ -109,7 +110,9 @@ plot(dataStepsInterval$interval, dataStepsInterval$steps, type="l",
 abline(v = dataStepsMaxInterval, col="blue", lwd=2) # add line where max val is
 ```
 
-The 5-minute interval `r dataStepsMaxInterval` contains the maximum number of
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+The 5-minute interval 835 contains the maximum number of
 steps among all intervals in the data set.  It is represented on the plot by
 the blue line.
 
@@ -118,7 +121,8 @@ the blue line.
 
 ### Missing Values Exploratory Data Analysis
 
-```{r}
+
+```r
 # total number of days with observations
 totalDates <- length(unique(data$date))
 
@@ -127,7 +131,13 @@ totalDatesWithMissing <- length(unique(dataWithMissing$date))
 
 print (sprintf("%d days out of %d total have NA values",
     totalDatesWithMissing, totalDates))
+```
 
+```
+## [1] "8 days out of 61 total have NA values"
+```
+
+```r
 # Output how many intervals in each day with missing values are missing values.
 # Note that there are 288 intervals per day (24 hours * 60 mins. / 5 mins.)
 for (date in unique(dataWithMissing$date)) {
@@ -136,9 +146,20 @@ for (date in unique(dataWithMissing$date)) {
 }
 ```
 
-There are `r nrow(dataWithMissing)` total missing values in the data set.
+```
+## [1] "2012-10-01 has 288 NA values"
+## [1] "2012-10-08 has 288 NA values"
+## [1] "2012-11-01 has 288 NA values"
+## [1] "2012-11-04 has 288 NA values"
+## [1] "2012-11-09 has 288 NA values"
+## [1] "2012-11-10 has 288 NA values"
+## [1] "2012-11-14 has 288 NA values"
+## [1] "2012-11-30 has 288 NA values"
+```
 
-Only `r totalDatesWithMissing` out of `r totalDates` days have NA values for step
+There are 2304 total missing values in the data set.
+
+Only 8 out of 61 days have NA values for step
 counts for any of their intervals.  For each of these, every interval has NA
 for the step count.  This means that it will not work to extrapolate missing
 interval data using other data within the same day.
@@ -154,7 +175,8 @@ in the data set.  This is based on an assumption that the person's activities
 are most similar on same days of the week (e.g. going to work first thing
 on Monday mornings).
 
-```{r cache=TRUE}
+
+```r
 #
 # This is an expensive calculation so cache it to speed up future knits.
 #
@@ -189,7 +211,8 @@ missing data filled in.
 
 ### Revised Mean and Median Total Number of Steps Per Day
 
-```{r}
+
+```r
 # Create a summary of the data set with the total number of steps for each
 # day, this time with the revised data set that has missing values filled in.
 completeDataStepsDay <- summarize(group_by(completeData, date),
@@ -204,13 +227,15 @@ histPlotSteps(completeDataStepsDay, completeDataStepsDayMean,
                 "Total Number of Steps Taken per Day (for filled in data set)")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+
 With the missing values filled in, the mean number of steps per day is now
-`r sprintf("%.2f", completeDataStepsDayMean)` and the median number of steps
-per day is now `r sprintf("%.2f", completeDataStepsDayMedian)`.  Adding in the
+10832.66 and the median number of steps
+per day is now 11015.00.  Adding in the
 missing values has increased the total daily number of steps with corresponding
 increases in the mean and median number of steps per day of 
-`r sprintf("%.2f", completeDataStepsDayMean - dataStepsDayMean)` and
-`r completeDataStepsDayMedian - dataStepsDayMedian` respectively.
+66.47 and
+250 respectively.
 
 Filling in the missing values caused the mean and median to move further apart,
 allowing the red line representing the median on the histogram to now be seen
@@ -218,7 +243,8 @@ separately from the blue line representing the mean.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r cache=TRUE}
+
+```r
 #
 # This is an expensive calculation so we cache it to speed up future knits.
 # The xyplot cannot be cached so it is included in a separate code block
@@ -251,12 +277,15 @@ completeDataStepsDay <- summarize(group_by(completeData, interval, typeofday),
 The `completeData` dataset now has an additional column named `typeofday` that
 specifies whether each observation was taken on a weekday or a weekend.
 
-```{r}
+
+```r
 # Create a panel plot showing the average number of steps take in each 
 # 5-minute interval across all weekdays and across all weekend days.
 xyplot(steps ~ interval | typeofday, completeDataStepsDay,
        layout=c(1,2), type="l")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
 
 This plot shows that the step activity started occuring earlier in the day, on
 average, on weekdays than on weekends but continued later into the day on
